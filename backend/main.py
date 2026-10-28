@@ -208,3 +208,22 @@ def create_faculty(
 
     finally:
         connection.close()
+
+
+@app.get("/admin/subjects")
+def list_subjects(current_user: dict = Depends(require_role("admin"))):
+    connection = get_connection()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT id, subject_code, subject_name, subject_type, section
+            FROM subjects
+            ORDER BY subject_code
+            """
+        ).fetchall()
+
+        return {"subjects": [dict(row) for row in rows]}
+
+    finally:
+        connection.close()
