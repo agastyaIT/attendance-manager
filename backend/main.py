@@ -7,6 +7,7 @@ from backend.security import create_access_token
 from backend.security import get_current_user, require_role
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel, EmailStr, Field
 
 
 app = FastAPI(title="Attendance Manager API")
@@ -26,6 +27,11 @@ class StudentRegister(BaseModel):
 class StudentLogin(BaseModel):
     email: EmailStr
     password: str
+
+class FacultyCreate(BaseModel):
+    name: str = Field(min_length=1)
+    email: EmailStr
+    password: str = Field(min_length=8)
 
 
 @app.get("/")
@@ -162,3 +168,43 @@ def login_for_docs(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.get("/admin/ping")
 def admin_ping(current_user: dict = Depends(require_role("admin"))):
     return {"message": "Admin access granted", "user": current_user["name"]}
+
+@app.post("/admin/faculty", status_code=201)
+def create_faculty(
+    faculty: FacultyCreate,
+    current_user: dict = Depends(require_role("admin")),
+):
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            INSERT INTO users (name, email, password_hash, role, section)
+            VALUES (?, ?, ?, 'faculty', NULL)
+            """,
+            (
+                faculty.name.strip(),
+                str(faculty.email).lower(),
+                hash_password(faculty.password),
+            ),
+        )
+        connection.commit()
+
+        return {
+            "message": "Faculty account created",
+            "user": {
+                "id": cursor.lastrowid,
+                "name": faculty.name.strip(),
+                "email": str(faculty.email).lower(),
+                "role": "faculty",
+            },
+        }
+
+    except sqlite3.IntegrityError:
+        raise HTTPException(
+            status_code=409,
+            detail="An account with this email already exists",
+        )
+
+    finally:
+        connection.close()
