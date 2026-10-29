@@ -12,6 +12,8 @@ from typing import Literal, Optional
 from backend.migrations import run_migrations
 from backend.attendance import router as attendance_router
 from backend.student import router as student_router
+from backend.timetable import router as timetable_router
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 
 app = FastAPI(title="Attendance Manager API")
@@ -19,6 +21,8 @@ app = FastAPI(title="Attendance Manager API")
 app.include_router(attendance_router)
 
 app.include_router(student_router)
+
+app.include_router(timetable_router)
 
 @app.on_event("startup")
 def startup():

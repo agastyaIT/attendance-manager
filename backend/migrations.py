@@ -1,6 +1,22 @@
 from backend.database import get_connection
 
 MIGRATIONS = [
+
+        """
+    CREATE TABLE IF NOT EXISTS timetable_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subject_id INTEGER NOT NULL REFERENCES subjects(id),
+        section TEXT NOT NULL CHECK (section IN ('A', 'B')),
+        faculty_id INTEGER REFERENCES users(id),
+        day_of_week INTEGER NOT NULL CHECK (day_of_week BETWEEN 1 AND 7),
+        start_time TEXT NOT NULL,
+        end_time TEXT NOT NULL,
+        room TEXT,
+        UNIQUE (section, day_of_week, start_time),
+        UNIQUE (faculty_id, day_of_week, start_time)
+    )
+    """,
+    
     """
     CREATE TABLE IF NOT EXISTS faculty_assignments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
