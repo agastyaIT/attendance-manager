@@ -8,6 +8,7 @@ from backend.security import get_current_user, require_role
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, Field
+from typing import Literal, Optional
 
 
 app = FastAPI(title="Attendance Manager API")
@@ -208,7 +209,12 @@ def create_faculty(
 
     finally:
         connection.close()
-
+        
+class SubjectCreate(BaseModel):
+    subject_code: str = Field(min_length=1)
+    subject_name: str = Field(min_length=1)
+    subject_type: Literal["theory", "lab", "project", "seminar"]
+    section: Optional[Literal["A", "B"]] = None
 
 @app.get("/admin/subjects")
 def list_subjects(current_user: dict = Depends(require_role("admin"))):
@@ -224,6 +230,56 @@ def list_subjects(current_user: dict = Depends(require_role("admin"))):
         ).fetchall()
 
         return {"subjects": [dict(row) for row in rows]}
+
+    finally:
+        connection.close()
+
+class SubjectCreate(BaseModel):
+    subject_code: str = Field(min_length=1)
+    subject_name: str = Field(min_length=1)
+    subject_type: Literal["theory", "lab", "project", "seminar"]
+    section: Optional[Literal["A", "B"]] = None
+
+
+@app.post("/admin/subjects", status_code=201)
+def create_subject(
+    subject: SubjectCreate,
+    current_user: dict = Depends(require_role("admin")),
+):
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            INSERT INTO subjects
+                (subject_code, subject_name, subject_type, section)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                subject.subject_code.strip(),
+                subject.subject_name.strip(),
+                subject.subject_type,
+                subject.section,
+            ),
+        )
+        connection.commit()
+
+        return {
+            "message": "Subject created",
+            "subject": {
+                "id": cursor.lastrowid,
+                "subject_code": subject.subject_code.strip(),
+                "subject_name": subject.subject_name.strip(),
+                "subject_type": subject.subject_type,
+                "section": subject.section,
+            },
+        }
+
+    except sqlite3.IntegrityError:
+        raise HTTPException(
+            status_code=409,
+            detail="A subject with this code already exists",
+        )
 
     finally:
         connection.close()
