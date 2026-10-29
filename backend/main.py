@@ -10,10 +10,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, Field
 from typing import Literal, Optional
 from backend.migrations import run_migrations
+from backend.attendance import router as attendance_router
 
 
 app = FastAPI(title="Attendance Manager API")
 
+app.include_router(attendance_router)
 
 @app.on_event("startup")
 def startup():
