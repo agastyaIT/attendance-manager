@@ -9,9 +9,9 @@ SUBJECTS = [
     ("16252112", "Cyber Security", "theory"),
     ("16252106", "DAA Lab", "lab"),
     ("16252107", "DBMS Lab", "lab"),
-    ("16252108", "OS Lab", "lab"),
-    ("16252109", "Macro Project-I", "project"),
-    ("16252110", "Semester Proficiency", "seminar"),
+    ("16252108", "Problem Solving Through Python Programming", "lab"),
+    ("16252109", "Semester Proficiency", "seminar"),
+    ("16252110", "Macro Project-I", "project"),
     ("16252111", "Self-learning/Presentation", "seminar"),
 ]
 
