@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Attendance Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-box">
+    <h1>Student Registration</h1>
+
+    <form id="register-form">
+      <label for="name">Full name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+
+      <label for="password">Password (at least 8 characters)</label>
+      <input type="password" id="password" required>
+
+      <label for="confirm">Confirm password</label>
+      <input type="password" id="confirm" required>
+
+      <label for="section">Section</label>
+      <select id="section" required>
+        <option value="">Choose section</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+      </select>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <p id="message"></p>
+    <p class="small-text">Already registered? <a href="index.html">Log in</a></p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>

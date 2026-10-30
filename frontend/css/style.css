@@ -64,3 +64,19 @@ button:hover {
   text-align: center;
   margin-top: 20px;
 }
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 15px;
+  background: white;
+}
+
+.success {
+  color: #16a34a;
+  margin-top: 15px;
+  min-height: 20px;
+}
