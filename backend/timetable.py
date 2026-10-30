@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -10,6 +11,16 @@ from backend.security import require_role
 router = APIRouter()
 
 TIME_PATTERN = r"^([01]\d|2[0-3]):[0-5]\d$"
+
+DAY_NAMES = {
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+    7: "Sunday",
+}
 
 
 class TimetableCreate(BaseModel):
@@ -276,6 +287,58 @@ def update_timetable_entry(
             status_code=409,
             detail="Clash: this section or this faculty member already has a class at that day and time",
         )
+
+    finally:
+        connection.close()
+
+@router.get("/student/timetable")
+def my_timetable(current_user: dict = Depends(require_role("student"))):
+    connection = get_connection()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT t.id, t.day_of_week, t.start_time, t.end_time, t.room,
+                   s.id AS subject_id, s.subject_code, s.subject_name,
+                   s.subject_type, u.name AS faculty_name
+            FROM timetable_entries t
+            JOIN subjects s ON s.id = t.subject_id
+            LEFT JOIN users u ON u.id = t.faculty_id
+            WHERE t.section = ?
+            ORDER BY t.day_of_week, t.start_time
+            """,
+            (current_user["section"],),
+        ).fetchall()
+
+        classes_by_day = {day: [] for day in range(1, 8)}
+
+        for row in rows:
+            classes_by_day[row["day_of_week"]].append(
+                {
+                    "entry_id": row["id"],
+                    "start_time": row["start_time"],
+                    "end_time": row["end_time"],
+                    "room": row["room"],
+                    "subject_id": row["subject_id"],
+                    "subject_code": row["subject_code"],
+                    "subject_name": row["subject_name"],
+                    "subject_type": row["subject_type"],
+                    "faculty_name": row["faculty_name"],
+                }
+            )
+
+        return {
+            "section": current_user["section"],
+            "today": date.today().isoweekday(),
+            "days": [
+                {
+                    "day_of_week": day,
+                    "day_name": DAY_NAMES[day],
+                    "classes": classes_by_day[day],
+                }
+                for day in range(1, 8)
+            ],
+        }
 
     finally:
         connection.close()
