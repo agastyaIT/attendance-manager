@@ -15,6 +15,13 @@ function getUser() {
   return text ? JSON.parse(text) : null;
 }
 
+function requireLogin(role) {
+  const user = getUser();
+  if (!getToken() || !user || user.role !== role) {
+    window.location.href = "/app/";
+  }
+}
+
 function logout() {
   sessionStorage.clear();
   window.location.href = "/app/";
@@ -48,9 +55,11 @@ async function apiRequest(path, method = "GET", body = null) {
   const response = await fetch(path, options);
   const data = await response.json().catch(() => ({}));
 
-  if (!response.ok) {
+if (!response.ok) {
+    if (response.status === 401 && token) {
+      logout();
+    }
     throw { status: response.status, message: errorMessage(data) };
   }
-
   return data;
 }

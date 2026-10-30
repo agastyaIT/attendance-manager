@@ -80,3 +80,80 @@ select {
   margin-top: 15px;
   min-height: 20px;
 }
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+.sidebar p {
+  color: #94a3b8;
+  margin: 4px 0;
+}
+
+.sidebar a {
+  display: block;
+  margin-top: 25px;
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar button {
+  background: #334155;
+  margin-top: 30px;
+}
+
+.main {
+  flex: 1;
+  padding: 25px;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  min-width: 220px;
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.big-number {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.safe {
+  color: #16a34a;
+}
+
+.borderline {
+  color: #d97706;
+}
+
+.short {
+  color: #dc2626;
+}
