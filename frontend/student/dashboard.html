@@ -16,8 +16,11 @@
       <button id="logout-btn">Log out</button>
     </div>
 
-    <div class="main">
+        <div class="main">
       <h1>My Attendance</h1>
+
+      <div id="warnings"></div>
+
       <div class="cards">
         <div class="card">
           <h3>Overall attendance</h3>
@@ -26,9 +29,12 @@
           <p id="overall-message"></p>
         </div>
       </div>
+
+      <h2>Subjects</h2>
+      <div class="cards" id="subjects"></div>
+
       <p class="error" id="message"></p>
     </div>
-  </div>
 
   <script src="../js/api.js"></script>
   <script src="../js/student.js"></script>
