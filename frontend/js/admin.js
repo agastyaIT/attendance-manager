@@ -19,12 +19,10 @@ async function run(action) {
 }
 
 async function loadAll() {
-  async function loadAll() {
   await loadUsers();
   await loadSubjects();
   await loadAssignments();
   await loadCorrectionFilters();
-}
 }
 
 function setupNavigation() {
@@ -42,6 +40,9 @@ function setupNavigation() {
 
       if (button.dataset.section === "corrections") run(searchSessions);
       if (button.dataset.section === "audit") run(loadAudit);
+        if (button.dataset.section === "corrections") run(searchSessions);
+      if (button.dataset.section === "audit") run(loadAudit);
+      if (button.dataset.section === "analytics") run(loadAnalytics);
     });
   });
 }
@@ -417,4 +418,95 @@ async function loadAudit() {
     );
     body.append(row);
   });
+}
+
+// ---------- analytics ----------
+function percentText(value) {
+  return value === null ? "--" : value + "%";
+}
+
+function statusOf(value) {
+  return value !== null && value >= 75 ? "safe" : "short";
+}
+
+function statCard(label, value) {
+  const card = makeElement("div", "", "subject-card");
+  card.appendChild(makeElement("div", label, "card-code"));
+  card.appendChild(makeElement("div", String(value), "card-percent"));
+  return card;
+}
+
+function makeBar(percentage, status) {
+  const bar = makeElement("div", "", "bar");
+  const fill = makeElement("div", "", "fill " + status);
+  fill.style.width = (percentage || 0) + "%";
+  bar.append(fill, makeElement("div", "", "marker"));
+  return bar;
+}
+
+function showTotals(totals) {
+  document.getElementById("totals").replaceChildren(
+    statCard("Students", totals.users_by_role.student),
+    statCard("Faculty", totals.users_by_role.faculty),
+    statCard("Subjects", totals.subjects),
+    statCard("Finalized sessions", totals.sessions.finalized),
+    statCard("Draft sessions", totals.sessions.draft)
+  );
+}
+
+function showSections(sections) {
+  const box = document.getElementById("section-stats");
+  const body = document.getElementById("subject-stats-body");
+  box.replaceChildren();
+  body.replaceChildren();
+  document.getElementById("no-analytics").hidden = sections.length > 0;
+
+  sections.forEach((block) => {
+    const status = statusOf(block.percentage);
+    const card = makeElement("div", "", "subject-card " + status);
+    card.appendChild(makeElement("div", "Section " + block.section, "card-name"));
+    card.appendChild(makeElement("div", percentText(block.percentage), "card-percent"));
+    card.appendChild(makeBar(block.percentage, status));
+    card.appendChild(
+      makeElement("p", block.attended + " present out of " + block.records + " marks", "muted")
+    );
+    box.append(card);
+
+    block.subjects.forEach((s) => {
+      const row = document.createElement("tr");
+      row.append(
+        cell(block.section),
+        cell(s.subject_code + " - " + s.subject_name),
+        cell(s.sessions_held),
+        cell(s.attended + " / " + s.records),
+        cell(percentText(s.percentage))
+      );
+      body.append(row);
+    });
+  });
+}
+
+function showShortStudents(students) {
+  const body = document.getElementById("short-body");
+  body.replaceChildren();
+  document.getElementById("no-short").hidden = students.length > 0;
+
+  students.forEach((s) => {
+    const row = document.createElement("tr");
+    row.append(
+      cell(s.name),
+      cell(s.email),
+      cell(s.section),
+      cell(percentText(s.percentage)),
+      cell(s.classes_to_recover)
+    );
+    body.append(row);
+  });
+}
+
+async function loadAnalytics() {
+  const data = await apiFetch("/admin/analytics");
+  showTotals(data.totals);
+  showSections(data.attendance_by_section);
+  showShortStudents(data.short_attendance_students);
 }
