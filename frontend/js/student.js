@@ -77,3 +77,55 @@ async function loadAttendance() {
 }
 
 loadAttendance();
+
+
+function showTimetable(data) {
+  const table = document.getElementById("timetable");
+  table.innerHTML = "";
+
+  const header = document.createElement("tr");
+  header.appendChild(makeElement("th", "Day"));
+  header.appendChild(makeElement("th", "Classes"));
+  table.appendChild(header);
+
+  for (const day of data.days) {
+    if (day.classes.length === 0 && day.day_of_week > 5) {
+      continue;
+    }
+
+    const row = document.createElement("tr");
+    if (day.day_of_week === data.today) {
+      row.className = "today";
+    }
+
+    row.appendChild(makeElement("td", day.day_name));
+
+    const cell = document.createElement("td");
+    if (day.classes.length === 0) {
+      cell.textContent = "No classes";
+    }
+
+    for (const item of day.classes) {
+      let text = item.start_time + " - " + item.end_time + "   " + item.subject_name;
+      if (item.room) {
+        text += " (Room " + item.room + ")";
+      }
+      cell.appendChild(makeElement("div", text));
+    }
+
+    row.appendChild(cell);
+    table.appendChild(row);
+  }
+}
+
+async function loadTimetable() {
+  try {
+    const data = await apiRequest("/student/timetable");
+    showTimetable(data);
+  } catch (error) {
+    document.getElementById("message").textContent =
+      error.message || "Cannot reach the server";
+  }
+}
+
+loadTimetable();

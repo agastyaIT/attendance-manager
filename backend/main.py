@@ -15,6 +15,8 @@ from backend.student import router as student_router
 from backend.timetable import router as timetable_router
 from fastapi import APIRouter, Depends, HTTPException, Query
 from backend.analytics import router as analytics_router
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI(title="Attendance Manager API")
@@ -26,6 +28,9 @@ app.include_router(student_router)
 app.include_router(timetable_router)
 
 app.include_router(analytics_router)
+
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 @app.on_event("startup")
 def startup():

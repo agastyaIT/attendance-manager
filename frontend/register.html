@@ -4,40 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - Attendance Manager</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/app/css/style.css">
 </head>
-<body>
-  <div class="login-box">
-    <h1>Student Registration</h1>
+<body class="auth-page">
+  <main class="auth-card">
+    <h1>Student registration</h1>
+    <p class="muted">Faculty and admin accounts are created by an administrator.</p>
+
+    <div id="message" class="msg" hidden></div>
 
     <form id="register-form">
-      <label for="name">Full name</label>
-      <input type="text" id="name" required>
-
-      <label for="email">Email</label>
-      <input type="email" id="email" required>
-
-      <label for="password">Password (at least 8 characters)</label>
-      <input type="password" id="password" required>
-
-      <label for="confirm">Confirm password</label>
-      <input type="password" id="confirm" required>
-
-      <label for="section">Section</label>
-      <select id="section" required>
-        <option value="">Choose section</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-      </select>
-
-      <button type="submit">Register</button>
+      <label>Full name
+        <input type="text" id="name" required>
+      </label>
+      <label>Email
+        <input type="email" id="email" required autocomplete="username">
+      </label>
+      <label>Password (at least 8 characters)
+        <input type="password" id="password" minlength="8" required autocomplete="new-password">
+      </label>
+      <label>Confirm password
+        <input type="password" id="confirm" minlength="8" required autocomplete="new-password">
+      </label>
+      <label>Section
+        <select id="section" required>
+          <option value="A">A</option>
+          <option value="B">B</option>
+        </select>
+      </label>
+      <button type="submit" class="btn">Register</button>
     </form>
 
-    <p id="message"></p>
-    <p class="small-text">Already registered? <a href="index.html">Log in</a></p>
-  </div>
+    <p class="muted">Already registered? <a href="/app/index.html">Log in</a></p>
+  </main>
 
-  <script src="js/api.js"></script>
-  <script src="js/register.js"></script>
+  <script src="/app/js/api.js"></script>
+  <script src="/app/js/auth.js"></script>
 </body>
 </html>
