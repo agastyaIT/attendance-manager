@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Change password - Attendance Manager</title>
+  <link rel="stylesheet" href="/app/css/style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-card">
+    <h1>Change password</h1>
+    <p class="muted" id="who"></p>
+    <div id="message" class="msg" hidden></div>
+
+    <form id="password-form">
+      <label>Current password
+        <input type="password" id="current-password" required>
+      </label>
+      <label>New password (at least 8 characters)
+        <input type="password" id="new-password" minlength="8" required>
+      </label>
+      <label>Confirm new password
+        <input type="password" id="confirm-password" required>
+      </label>
+      <button class="btn" type="submit">Change password</button>
+    </form>
+
+    <a href="#" id="back-link">Back to dashboard</a>
+  </main>
+
+  <script src="/app/js/api.js"></script>
+  <script src="/app/js/account.js"></script>
+</body>
+</html>
