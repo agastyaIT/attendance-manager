@@ -57,7 +57,7 @@ python-dotenv, plain HTML/CSS/JavaScript.
 5. Load the twelve subjects:
 
    ```powershell
-   python -m backend.seed_subjects
+   python -m backend.subjects
    ```
 
 6. Start the server:
@@ -116,3 +116,8 @@ tests/       unit tests for the attendance calculations
 
 Aeshna Jain and Agastya Sadaphale, under the guidance of Dr. Abhilash Sonkar,
 School of Information Technology, MITS Gwalior.
+
+
+## Render deployment
+
+See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md). This repository includes a Render Blueprint (`render.yaml`) with a persistent SQLite disk, generated JWT secret, health check, and production Uvicorn command. The existing local database files are not included in the deployment package; the service initializes a fresh database on first startup.

@@ -1,19 +1,25 @@
-Python cache
-
-pycache/
+# Python
+__pycache__/
 *.py[cod]
-
-Virtual environments
-
-env/
+.pytest_cache/
 .venv/
+venv/
+env/
 
-Secrets
-
+# Secrets and local configuration
 .env
+.env.*
+!.env.example
 
-SQLite databases
-
+# Local SQLite databases and journals
 *.db
 *.sqlite
 *.sqlite3
+*.db-shm
+*.db-wal
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
