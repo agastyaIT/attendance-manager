@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import date, time
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -391,6 +391,111 @@ def my_sessions(current_user: dict = Depends(require_role("faculty"))):
         ).fetchall()
 
         return {"sessions": [dict(row) for row in rows]}
+
+    finally:
+        connection.close()
+
+@router.get("/admin/attendance-sessions")
+def admin_list_sessions(
+    subject_id: Optional[int] = None,
+    section: Optional[Literal["A", "B"]] = None,
+    session_date: Optional[date] = None,
+    current_user: dict = Depends(require_role("admin")),
+):
+    day = session_date.isoformat() if session_date else None
+    connection = get_connection()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT sess.id, sess.session_date, sess.start_time, sess.end_time,
+                   sess.section, s.subject_code, s.subject_name,
+                   f.name AS faculty_name,
+                   COUNT(ar.id) AS marked,
+                   COALESCE(SUM(ar.status = 'present'), 0) AS present
+            FROM attendance_sessions sess
+            JOIN subjects s ON s.id = sess.subject_id
+            JOIN users f ON f.id = sess.faculty_id
+            LEFT JOIN attendance_records ar ON ar.session_id = sess.id
+            WHERE sess.status = 'finalized'
+              AND (? IS NULL OR sess.subject_id = ?)
+              AND (? IS NULL OR sess.section = ?)
+              AND (? IS NULL OR sess.session_date = ?)
+            GROUP BY sess.id
+            ORDER BY sess.session_date DESC, sess.start_time DESC
+            LIMIT 100
+            """,
+            (subject_id, subject_id, section, section, day, day),
+        ).fetchall()
+
+        return {"sessions": [dict(row) for row in rows]}
+
+    finally:
+        connection.close()
+
+
+@router.get("/admin/attendance-sessions/{session_id}/records")
+def admin_session_records(
+    session_id: int,
+    current_user: dict = Depends(require_role("admin")),
+):
+    connection = get_connection()
+
+    try:
+        session = connection.execute(
+            """
+            SELECT sess.id, sess.session_date, sess.start_time, sess.end_time,
+                   sess.section, sess.status, s.subject_code, s.subject_name
+            FROM attendance_sessions sess
+            JOIN subjects s ON s.id = sess.subject_id
+            WHERE sess.id = ?
+            """,
+            (session_id,),
+        ).fetchone()
+
+        if session is None:
+            raise HTTPException(status_code=404, detail="Session not found")
+
+        rows = connection.execute(
+            """
+            SELECT u.id AS student_id, u.name, u.email, ar.status
+            FROM attendance_records ar
+            JOIN users u ON u.id = ar.student_id
+            WHERE ar.session_id = ?
+            ORDER BY u.name
+            """,
+            (session_id,),
+        ).fetchall()
+
+        return {"session": dict(session), "records": [dict(row) for row in rows]}
+
+    finally:
+        connection.close()
+
+
+@router.get("/admin/corrections")
+def list_corrections(current_user: dict = Depends(require_role("admin"))):
+    connection = get_connection()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT c.id, c.corrected_at, c.old_status, c.new_status, c.reason,
+                   stu.name AS student_name, stu.email AS student_email,
+                   adm.name AS admin_name,
+                   sess.session_date, sess.start_time, sess.section,
+                   s.subject_code, s.subject_name
+            FROM attendance_corrections c
+            JOIN users stu ON stu.id = c.student_id
+            JOIN users adm ON adm.id = c.corrected_by
+            JOIN attendance_sessions sess ON sess.id = c.session_id
+            JOIN subjects s ON s.id = sess.subject_id
+            ORDER BY c.id DESC
+            LIMIT 100
+            """
+        ).fetchall()
+
+        return {"corrections": [dict(row) for row in rows]}
 
     finally:
         connection.close()
