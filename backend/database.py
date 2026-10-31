@@ -1,7 +1,13 @@
+import os
 import sqlite3
 from pathlib import Path
 
-DATABASE_PATH = Path(__file__).resolve().parent / "attendance.db"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEFAULT_DATABASE_PATH = Path(__file__).resolve().parent / "attendance.db"
+DATABASE_PATH = Path(os.getenv("DATABASE_PATH") or DEFAULT_DATABASE_PATH)
 
 def get_connection():
     connection = sqlite3.connect(DATABASE_PATH)
