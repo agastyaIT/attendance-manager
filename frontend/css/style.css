@@ -293,3 +293,57 @@ input[type="checkbox"]:disabled { cursor: default; }
 .check-col { width: 80px; text-align: center; }
 
 #records-panel { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+
+/* ---------- extra rules for the student dashboard ---------- */
+.layout { display: flex; min-height: 100vh; }
+.main { flex: 1; min-width: 0; padding: 1.5rem; }
+
+.sidebar a {
+  color: #e2e8f0;
+  text-decoration: none;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  background: var(--sidebar-hover);
+}
+.sidebar > button {
+  margin-top: auto;
+  padding: 0.55rem;
+  background: none;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #e2e8f0;
+  cursor: pointer;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+.card h3 { margin: 0 0 0.4rem; color: var(--muted); font-size: 0.9rem; }
+.card p { margin: 0.3rem 0; }
+.code { font-size: 0.8rem; color: var(--muted); }
+
+.big-number { font-size: 2.4rem; font-weight: 700; margin: 0.2rem 0; }
+.big-number.safe { color: var(--ok); }
+.big-number.borderline { color: #d97706; }
+.big-number.short { color: var(--danger); }
+.big-number.no_classes { color: var(--muted); }
+
+.bar-fill { height: 100%; border-radius: 999px; background: var(--muted); }
+.bar-fill.safe { background: var(--ok); }
+.bar-fill.borderline { background: #d97706; }
+.bar-fill.short { background: var(--danger); }
+
+.error { color: var(--danger); }
+.success { color: var(--ok); }
+
+#timetable { background: var(--card); }
+#timetable td:first-child { width: 130px; white-space: nowrap; }
+tr.today td { background: #dbeafe; font-weight: 600; }
+
+@media (max-width: 800px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; }
+}
