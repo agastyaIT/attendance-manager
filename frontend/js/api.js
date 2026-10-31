@@ -1,6 +1,8 @@
 // Pages to open after login. Add faculty and student when those dashboards exist.
-const DASHBOARDS = { admin: "/app/admin/dashboard.html" };
-
+const DASHBOARDS = {
+  admin: "/app/admin/dashboard.html",
+  student: "/app/student/dashboard.html",
+};
 function errorMessage(data, status) {
   if (data && typeof data.detail === "string") {
     return data.detail;
@@ -123,4 +125,13 @@ function fillSelect(id, items, valueOf, labelOf) {
   });
 
   if (previous) select.value = previous;
+}
+
+// Helpers used by student.js
+function getUser() {
+  return JSON.parse(sessionStorage.getItem("user"));
+}
+
+function apiRequest(path, options) {
+  return apiFetch(path, options);
 }
