@@ -133,6 +133,33 @@ function getUser() {
   return JSON.parse(sessionStorage.getItem("user"));
 }
 
-function apiRequest(path, options) {
-  return apiFetch(path, options);
+// ---------- added for the login, register and student pages ----------
+function saveSession(token, user) {
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("user", JSON.stringify(user));
+}
+
+function getToken() {
+  return sessionStorage.getItem("token");
+}
+
+function makeElement(tag, text, className) {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  if (className) {
+    element.className = className;
+  }
+  return element;
+}
+
+// Works both ways: apiRequest(path, options) and apiRequest(path, "POST", body)
+function apiRequest(path, methodOrOptions = {}, body = null) {
+  if (typeof methodOrOptions === "string") {
+    const options = { method: methodOrOptions };
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+    return apiFetch(path, options);
+  }
+  return apiFetch(path, methodOrOptions);
 }

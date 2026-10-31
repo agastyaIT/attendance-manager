@@ -357,6 +357,7 @@ def test_correction_needs_a_reason(client, env):
 
 FACULTY_ENDPOINTS = [
     ("GET", "/faculty/classes", None),
+        ("GET", "/faculty/attendance-sessions", None),
     (
         "POST",
         "/faculty/attendance-sessions",
@@ -409,3 +410,21 @@ def test_faculty_cannot_correct_attendance(client, env):
     method, path, body = CORRECTION_ENDPOINT
     response = client.request(method, path, json=body, headers=env["fac"])
     assert response.status_code == 403
+
+
+def test_faculty_session_list_shows_only_own_sessions_with_counts(client, env):
+    session_id = create_session(client, env)
+    mark(client, env, session_id, s1="present", s2="absent")
+
+    mine = client.get("/faculty/attendance-sessions", headers=env["fac"])
+    assert mine.status_code == 200
+    sessions = mine.json()["sessions"]
+    assert len(sessions) == 1
+    assert sessions[0]["id"] == session_id
+    assert sessions[0]["status"] == "draft"
+    assert sessions[0]["marked"] == 2
+    assert sessions[0]["present"] == 1
+
+    other = client.get("/faculty/attendance-sessions", headers=env["fac2"])
+    assert other.status_code == 200
+    assert other.json()["sessions"] == []
