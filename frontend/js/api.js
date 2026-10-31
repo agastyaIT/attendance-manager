@@ -2,6 +2,7 @@
 const DASHBOARDS = {
   admin: "/app/admin/dashboard.html",
   student: "/app/student/dashboard.html",
+  faculty: "/app/faculty/dashboard.html",
 };
 function errorMessage(data, status) {
   if (data && typeof data.detail === "string") {

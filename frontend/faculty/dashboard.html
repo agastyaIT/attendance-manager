@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty - Attendance Manager</title>
+  <link rel="stylesheet" href="/app/css/style.css">
+</head>
+<body class="app">
+  <aside class="sidebar">
+    <h2>Attendance Manager</h2>
+    <nav>
+      <button class="nav-btn active" type="button">Attendance</button>
+    </nav>
+    <div class="sidebar-footer">
+      <span id="whoami"></span>
+      <button id="logout-btn" class="btn-link" type="button">Log out</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div id="message" class="msg" hidden></div>
+
+    <section class="panel">
+      <h3>Start a class session</h3>
+      <p id="no-classes" class="muted" hidden>No classes are assigned to you yet. Ask the administrator to assign you a subject and section.</p>
+      <form id="session-form" class="form-grid">
+        <label>Class
+          <select id="class-select"></select>
+        </label>
+        <label>Date
+          <input type="date" id="session-date" required>
+        </label>
+        <label>Start time
+          <input type="time" id="start-time" required>
+        </label>
+        <label>End time
+          <input type="time" id="end-time" required>
+        </label>
+        <button class="btn" type="submit">Start session</button>
+      </form>
+    </section>
+
+    <section id="session-panel" class="panel" hidden>
+      <div class="session-bar">
+        <div>
+          <h3 id="session-title"></h3>
+          <span id="session-info" class="muted"></span>
+          <span id="session-status" class="badge"></span>
+        </div>
+        <button id="close-btn" class="btn small secondary" type="button">Close</button>
+      </div>
+
+      <p id="finalized-note" class="msg success" hidden>This session is finalized and can no longer be changed. Only an administrator can correct it.</p>
+      <p id="empty-note" class="muted" hidden>There are no students in this section yet.</p>
+
+      <div id="roster-tools" class="session-actions">
+        <button id="select-all" class="btn small secondary" type="button">Tick all</button>
+        <button id="clear-all" class="btn small secondary" type="button">Untick all</button>
+        <span id="count" class="muted"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="check-col">Present</th><th>Name</th><th>Email</th></tr>
+          </thead>
+          <tbody id="roster-body"></tbody>
+        </table>
+      </div>
+
+      <div id="roster-actions" class="session-actions">
+        <button id="save-btn" class="btn" type="button">Save attendance</button>
+        <button id="finalize-btn" class="btn danger" type="button">Finalize</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>My recent sessions</h3>
+      <p class="muted">Your 30 most recent sessions. Resume a draft or view a finalized one.</p>
+      <p id="no-sessions" class="muted" hidden>No sessions yet.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Time</th><th>Subject</th><th>Section</th><th>Status</th><th>Present / Marked</th><th></th></tr>
+          </thead>
+          <tbody id="sessions-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app/js/api.js"></script>
+  <script src="/app/js/faculty.js"></script>
+</body>
+</html>

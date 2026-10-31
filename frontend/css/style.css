@@ -264,3 +264,30 @@ th { color: var(--muted); font-weight: 600; }
 .badge { padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
 .badge.present { background: #dcfce7; color: #166534; }
 .badge.absent { background: #fee2e2; color: #991b1b; }
+
+/* ---------- faculty dashboard ---------- */
+input[type="checkbox"] { width: 1.15rem; height: 1.15rem; cursor: pointer; }
+input[type="checkbox"]:disabled { cursor: default; }
+
+.btn.secondary { background: #64748b; }
+
+.badge.draft { background: #fef3c7; color: #92400e; }
+.badge.finalized { background: #dbeafe; color: #1e40af; }
+
+.session-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.session-bar h3 { margin: 0 0 0.25rem; }
+.session-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0.75rem 0;
+}
+.check-col { width: 80px; text-align: center; }

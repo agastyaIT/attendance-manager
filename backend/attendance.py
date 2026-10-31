@@ -365,3 +365,32 @@ def correct_record(
 
     finally:
         connection.close()
+
+
+@router.get("/faculty/attendance-sessions")
+def my_sessions(current_user: dict = Depends(require_role("faculty"))):
+    connection = get_connection()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT sess.id, sess.session_date, sess.start_time, sess.end_time,
+                   sess.section, sess.status,
+                   s.subject_code, s.subject_name,
+                   COUNT(ar.id) AS marked,
+                   COALESCE(SUM(ar.status = 'present'), 0) AS present
+            FROM attendance_sessions sess
+            JOIN subjects s ON s.id = sess.subject_id
+            LEFT JOIN attendance_records ar ON ar.session_id = sess.id
+            WHERE sess.faculty_id = ?
+            GROUP BY sess.id
+            ORDER BY sess.session_date DESC, sess.start_time DESC
+            LIMIT 30
+            """,
+            (current_user["id"],),
+        ).fetchall()
+
+        return {"sessions": [dict(row) for row in rows]}
+
+    finally:
+        connection.close()
