@@ -17,6 +17,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from backend.analytics import router as analytics_router
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+import os
+from fastapi.middleware.cors import CORSMiddleware
+from backend.account import router as account_router
 
 
 app = FastAPI(title="Attendance Manager API")
@@ -29,8 +33,18 @@ app.include_router(timetable_router)
 
 app.include_router(analytics_router)
 
+app.include_router(account_router)
+
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:5173")],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 def startup():
